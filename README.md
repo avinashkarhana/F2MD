@@ -19,13 +19,13 @@ The scientific publication is available on [ResearchGate](https://www.researchga
 ## Features
 * Basic Plausibility Checks on Received Beacons (mdChecks)
 * Node Level Plausibility Investigation (mdApplications)
-* Real Time Machine Learning for Plausibility Investigation (HTTP to the Python Server: [machine-learning-server](https://github.com/josephkamel/F2MD/tree/master/machine-learning-server))
+* Real Time Machine Learning for Plausibility Investigation (HTTP to the Python Server: [machine-learning-server](https://github.com/avinashkarhana/F2MD/tree/master/machine-learning-server))
 * Real Time Detection Status Output (mdStats, see README in f2md-results)
 * Support for Multiple Reporting Mechanisms (mdReport)
-* Support for Global Reports Collection and Investigation (HTTP to the Python Server: [misbehavior-authority-server](https://github.com/josephkamel/F2MD/tree/master/misbehavior-authority-server))
+* Support for Global Reports Collection and Investigation (HTTP to the Python Server: [misbehavior-authority-server](https://github.com/avinashkarhana/F2MD/tree/master/misbehavior-authority-server))
 * Basic Psudonym Change Policies (mdPCPolicies)
 * Local and Global Misbehavior Attacks Implementation (mdAttacks)
-* Launch Attacks in Real Time (HTTP to the Python Server: [attack-server](https://github.com/josephkamel/F2MD/tree/master/attack-server))
+* Launch Attacks in Real Time (HTTP to the Python Server: [attack-server](https://github.com/avinashkarhana/F2MD/tree/master/attack-server))
 
 ## Installation
 
@@ -41,7 +41,7 @@ Or access the **Docker Image** here:
 
 ### The easy way
 
-1. If you're running a Debian-based Linux distribution, use the [automatic install script](https://raw.githubusercontent.com/josephkamel/F2MD/master/installF2MD) (tested on Debian 9 and Ubuntu 18.04)
+1. If you're running a Debian-based Linux distribution, use the [automatic install script](https://raw.githubusercontent.com/avinashkarhana/F2MD/master/installF2MD) (tested on Debian 9 and Ubuntu 18.04)
 ```
 $ ./installF2MD
 ```
@@ -52,7 +52,7 @@ $ ./installF2MD
 2. Install OMNeT++ 5.6.1
 3. Clone this repository along with all the submodules to your local machine
 ```
-$ git clone --recurse-submodules https://github.com/josephkamel/F2MD.git
+$ git clone --recurse-submodules https://github.com/avinashkarhana/F2MD.git
 ```
 4. Build all f2md modules (inet, veins, veins_inet3 and simulte)
 ```
@@ -77,7 +77,7 @@ $ cd f2md-results && ./plotScenario
 
 ## Project Diagram
 
- ![alt text](https://github.com/josephkamel/F2MD/blob/master/F2MD-Diagram-V2.jpg)
+ ![alt text](https://github.com/avinashkarhana/F2MD/blob/master/F2MD-Diagram-V2.jpg)
 
 
 
