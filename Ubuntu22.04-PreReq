@@ -1,0 +1,130 @@
+#!/bin/bash
+
+CUR_DIR=$(pwd)
+
+echo -e "\n################ Installing Prerequisite for F2MD Build and Install on Ubuntu 22.04 #####################\n"
+# Ask User if tey want to install the prerequisites in current directory or specify a directory
+echo -e "Do you want to install the prerequisites in the current directory? (y/n)"
+read -r response
+if [[ $response == "y" ]]; then
+    ROOT_DIR=$CUR_DIR
+else
+    echo -e "Enter the directory where you want to install the prerequisites: "
+    read -r ROOT_DIR
+    if [ ! -d "$ROOT_DIR" ]; then
+        echo -e "The directory does not exist. Do you want to create it? (y/n)"
+        read -r response
+        if [[ $response == "y" ]]; then
+            mkdir -p $ROOT_DIR
+        else
+            echo -e "Exiting the script. Please run the script again and specify a valid directory."
+            exit 1
+        fi
+    fi
+fi
+
+PROGRAMS_DIR="$ROOT_DIR/Programs"
+
+# create the Programs directory if it does not exist
+if [ ! -d "$PROGRAMS_DIR" ]; then
+    mkdir -p $PROGRAMS_DIR
+fi
+
+# This script is used to install the prerequisites for the F2MD project on Ubuntu 22.04
+echo -e "\n################################## Installing Prerequisite Ubuntu Packages #############################\n"
+sudo apt-get install -y build-essential clang lld gdb bison flex perl python3 python3-pip qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libqt5opengl5-dev libxml2-dev zlib1g-dev doxygen graphviz libwebkit2gtk-4.0-37 xdg-utils
+sudo apt -y install ffmpeg
+sudo apt -y install cmake
+sudo apt -y install python-is-python3
+sudo apt-get -y install nemiver
+sudo apt-get -y install mpi-default-dev
+sudo apt-get -y install build-essential tar curl zip unzip
+sudo apt-get -y install zlib1g-dev
+sudo apt-get -y install libpng-dev
+sudo apt-get -y install libpng12-0
+sudo apt-get -y install libgdal-dev
+sudo apt-get -y install libglew-dev
+sudo apt-get -y install libopenscenegraph-dev
+sudo apt-get -y install mpi-default-dev
+python3 -m pip install --user --upgrade numpy pandas matplotlib scipy seaborn posix_ipc
+
+# Install Draco which is a dependency for osgEarth
+echo -e "\n############################# Installing Draco (OSGEarth's Dependency) #################################\n"
+cd $PROGRAMS_DIR
+if [ -d "draco" ]; then
+    echo "Removing existing Draco directory beacuse it already exists"
+    rm -rf draco
+fi
+git clone https://github.com/google/draco.git
+cd draco
+echo -e "Moved to $(pwd)"
+mkdir -p build
+cd build
+echo -e "Moved to $(pwd)"
+cmake .. -DCMAKE_CXX_FLAGS=-fPIC
+echo -e "\n** CMake for Draco Done**\n"
+make -j8
+echo -e "\n** Make for Draco Done**\n"
+sudo make install
+echo -e "\n** Draco Installed**\n"
+cd $ROOT_DIR
+
+# Build and Install osgEarth
+echo -e "\n################################## Building and Installing osgEarth ####################################\n"
+cd $PROGRAMS_DIR
+if [ -d "osgearth" ]; then
+    echo "Removing existing osgEarth directory beacuse it already exists"
+    rm -rf osgearth
+fi
+git clone https://github.com/gwaldron/osgearth.git
+cd osgearth
+echo -e "Moved to $(pwd)"
+mkdir -p build
+cd build
+echo -e "Moved to $(pwd)"
+cmake .. -DOSGEARTH_ENABLE_FASTDXT=OFF
+echo -e "\n** CMake for osgEarth Done**\n"
+make -j8
+echo -e "\n** Make for osgEarth Done**\n"
+sudo make install
+echo -e "\n** osgEarth Installed**\n"
+export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64
+echo -e "\n** LD_LIBRARY_PATH set to /usr/local/lib:/usr/local/lib64**\n"
+cd $ROOT_DIR
+
+# Build and Install OMNeT++
+echo -e "\n################################## Building and Installing OMNeT++ ####################################\n"
+cd $PROGRAMS_DIR
+if [ -d "omnetpp-6.0.3" ]; then
+    echo "Removing existing omnetpp-6.0.3 directory beacuse it already exists"
+    rm -rf omnetpp-6.0.3
+fi
+wget https://github.com/omnetpp/omnetpp/releases/download/omnetpp-6.0.3/omnetpp-6.0.3-linux-x86_64.tgz
+# Silently Extract the downloaded file to folder omnetpp-6.0.3
+tar -xvzf omnetpp-6.0.3-linux-x86_64.tgz > /dev/null
+# Exit if the extraction fails
+if [ $? -ne 0 ]; then
+    echo -e "Extraction of omnetpp-6.0.3-linux-x86_64.tgz failed. Exiting the script."
+    exit 1
+fi
+rm -rf omnetpp-6.0.3-linux-x86_64.tgz
+mv omnetpp-6.0.3-linux-x86_64 omnetpp-6.0.3
+cd omnetpp-6.0.3/
+echo -e "Moved to $(pwd)"
+source setenv
+# Add [ -f "$HOME/Programs/omnetpp-6.0.3/setenv" ] && source "$HOME/Programs/omnetpp-6.0.3/setenv" to end of ~/.bashrc
+{ echo '## Custom OMNeT++ Configuration'; 
+  echo '[ -f "$HOME/Programs/omnetpp-6.0.3/setenv" ] && source "$HOME/Programs/omnetpp-6.0.3/setenv"'; 
+  echo '## End of Custom OMNeT++ Configuration'; } >> ~/.bashrc
+
+./configure
+echo -e "\n** Configure for OMNeT++ Done**\n"
+make
+echo -e "\n** Make for OMNeT++ Done**\n"
+cd $ROOT_DIR
+
+# Install SUMO
+echo -e "\n############################################# Installing SUMO #########################################\n"
+sudo add-apt-repository ppa:sumo/stable
+sudo apt-get update
+sudo apt-get install sumo sumo-tools sumo-doc
